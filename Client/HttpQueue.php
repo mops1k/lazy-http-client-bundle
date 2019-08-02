@@ -38,7 +38,7 @@ class HttpQueue
      */
     public function add(QueryInterface $query): void
     {
-        $this->pool[$query->getHashKey()] = clone $query;
+        $this->pool[$query->getHashKey()] = $query;
     }
 
     /**
@@ -69,7 +69,6 @@ class HttpQueue
                     'headers' => $response->getHeaders(),
                     'statusCode' => $response->getStatusCode(),
                     'content' => $response->getBody()->getContents(),
-                    $response
                 ];
             }, function (ClientException $reason) use ($key) {
                 $response = $reason->getResponse();

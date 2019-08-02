@@ -64,7 +64,7 @@ abstract class AbstractClient implements ClientInterface
      */
     public function use(string $queryClass): void
     {
-        $this->query = $this->queryContainer->get($queryClass);
+        $this->query = clone $this->queryContainer->get($queryClass);
 
         if (!$this->query->isSupport($this)) {
             throw new ClientNotSupportedException($this, $this->query);

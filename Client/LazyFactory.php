@@ -25,6 +25,11 @@ class LazyFactory
     private $apiPool;
 
     /**
+     * @var ResponseInterface[]|GhostObjectInterface[]
+     */
+    private $responses = [];
+
+    /**
      * LazyFactory constructor.
      *
      * @param HttpQueue $apiPool
@@ -45,6 +50,10 @@ class LazyFactory
     public function create(ClientInterface $client): GhostObjectInterface
     {
         $key = $client->getCurrentQuery()->getHashKey();
+        if (\array_key_exists($key, $this->responses)) {
+            return $this->responses[$key];
+        }
+
         $initializer = function (
             GhostObjectInterface $ghostObject,
             string $method,
@@ -65,6 +74,8 @@ class LazyFactory
             return true;
         };
 
-        return $this->lazyFactory->createProxy($client->getCurrentQuery()->getResponseClassName(), $initializer);
+        $this->responses[$key] = $this->lazyFactory->createProxy($client->getCurrentQuery()->getResponseClassName(), $initializer);
+
+        return $this->responses[$key];
     }
 }
