@@ -1,0 +1,16 @@
+services:
+    _defaults:
+        public: false
+
+    LazyHttpClientBundle\Client\Manager:
+        arguments:
+            - ~
+
+    LazyHttpClientBundle\Client\QueryContainer:
+        arguments:
+            - ~
+
+    LazyHttpClientBundle\Client\HttpQueue: ~
+    LazyHttpClientBundle\Client\LazyFactory:
+        arguments:
+            - '@LazyHttpClientBundle\Client\HttpQueue'
