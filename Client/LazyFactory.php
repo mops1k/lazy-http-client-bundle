@@ -65,7 +65,7 @@ class LazyFactory
             $initializer = null;
 
             $this->apiPool->execute();
-            $response = $this->apiPool->getResponseForKey($key);
+            $response = $this->apiPool->getResponse($key);
 
             $properties["\0*\0content"]    = $response['content'];
             $properties["\0*\0statusCode"] = $response['statusCode'];

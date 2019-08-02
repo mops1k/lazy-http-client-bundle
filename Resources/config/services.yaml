@@ -10,7 +10,14 @@ services:
         arguments:
             - ~
 
-    LazyHttpClientBundle\Client\HttpQueue: ~
+    LazyHttpClientBundle\Client\Logger:
+        tags:
+            - { name: monolog.logger, channel: lazy_http_client }
+
+    LazyHttpClientBundle\Client\HttpQueue:
+        arguments:
+            - '@monolog.logger.lazy_http_client'
+
     LazyHttpClientBundle\Client\LazyFactory:
         arguments:
             - '@LazyHttpClientBundle\Client\HttpQueue'

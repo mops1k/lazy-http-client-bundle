@@ -22,7 +22,7 @@ interface ClientInterface
     /**
      * @return string
      */
-    public function getBaseUri(): string;
+    public function getHost(): string;
 
     /**
      * @return QueryInterface

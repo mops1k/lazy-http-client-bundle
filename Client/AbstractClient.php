@@ -8,9 +8,6 @@ use LazyHttpClientBundle\Exception\QueryNotFoundException;
 use LazyHttpClientBundle\Interfaces\ClientInterface;
 use LazyHttpClientBundle\Interfaces\QueryInterface;
 use LazyHttpClientBundle\Interfaces\ResponseInterface;
-use LazyHttpClientBundle\Client\HttpQueue;
-use LazyHttpClientBundle\Client\LazyFactory;
-use LazyHttpClientBundle\Client\QueryContainer;
 use ProxyManager\Proxy\GhostObjectInterface;
 
 /**
@@ -76,7 +73,7 @@ abstract class AbstractClient implements ClientInterface
     /**
      * @return string
      */
-    public function getBaseUri(): string
+    public function getHost(): string
     {
         return static::BASE_URI;
     }

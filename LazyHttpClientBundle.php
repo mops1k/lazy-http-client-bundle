@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LazyHttpClientBundle;
 
 use LazyHttpClientBundle\DependencyInjection\CompilerPass\ManagerCompilerPass;
+use LazyHttpClientBundle\DependencyInjection\CompilerPass\MonologLoggerChannelCompilerPass;
 use LazyHttpClientBundle\DependencyInjection\CompilerPass\QueryContainerCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

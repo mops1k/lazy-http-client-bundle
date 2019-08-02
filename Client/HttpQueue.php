@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class ApiPool
@@ -30,6 +31,26 @@ class HttpQueue
      * @var array
      */
     private $responses = [];
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var array
+     */
+    private $requestsInfo = [];
+
+    /**
+     * HttpQueue constructor.
+     *
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Add query to pool
@@ -56,27 +77,43 @@ class HttpQueue
             $uri = $query->buildUri();
             if (!\array_key_exists(\get_class($query->getClient()), $this->httpClients)) {
                 $this->httpClients[\get_class($query->getClient())] = new Client(\array_merge([
-                    'base_uri' => $query->getClient()->getBaseUri()
+                    'base_uri' => $query->getClient()->getHost()
                 ], $query->getClient()->getOptions()));
             }
 
             $request = $query->getRequest();
             $httpRequest = new Request($query->getMethod(), $uri, $request->getHeaders()->all(), $request->getBody());
 
+            $this->requestsInfo[$key] = [
+                'host'       => $query->getClient()->getHost(),
+                'uri'        => $uri,
+                'method'     => $query->getMethod(),
+                'parameters' => $request->getParameters()->all(),
+                'headers'    => $request->getHeaders()->all(),
+                'body'       => $request->getBody(),
+            ];
+
             $promise = $this->httpClients[\get_class($query->getClient())]->sendAsync($httpRequest, $query->getRequest()->getOptions());
             $promise->then(function (ResponseInterface $response) use ($key) {
                 $this->responses[$key] = [
-                    'headers' => $response->getHeaders(),
+                    'headers'    => $response->getHeaders(),
                     'statusCode' => $response->getStatusCode(),
-                    'content' => $response->getBody()->getContents(),
+                    'content'    => $response->getBody()->getContents(),
                 ];
+
+                $this->logger->info('Request success!', $this->requestsInfo[$key]);
             }, function (ClientException $reason) use ($key) {
                 $response = $reason->getResponse();
                 $this->responses[$key] = [
-                    'headers' => $response ? $response->getHeaders() : [],
+                    'headers'    => $response ? $response->getHeaders() : [],
                     'statusCode' => $response ? $response->getStatusCode() : $reason->getCode(),
-                    'content' => $response ? $response->getBody()->getContents() : $reason->getMessage(),
+                    'content'    => $response ? $response->getBody()->getContents() : $reason->getMessage(),
                 ];
+
+                $this->logger->error('Request failed!', \array_merge($this->requestsInfo[$key], [
+                    'statusCode' => $response ? $response->getStatusCode() : $reason->getCode(),
+                    'reason'     => $reason->getMessage(),
+                ]));
             });
             $promises[] = $promise;
         }
@@ -99,12 +136,24 @@ class HttpQueue
      *
      * @throws ResponseNotFoundException
      */
-    public function getResponseForKey(string $key): array
+    public function getResponse(string $key): array
     {
         if (!\array_key_exists($key, $this->responses)) {
             throw new ResponseNotFoundException();
         }
 
         return $this->responses[$key];
+    }
+
+    /**
+     * Return request information
+     *
+     * @param string $key
+     *
+     * @return array|null
+     */
+    public function getRequestInfo(string $key): ?array
+    {
+        return $this->requestsInfo[$key] ?? null;
     }
 }
