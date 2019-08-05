@@ -32,6 +32,16 @@ final class Request
     private $options = [];
 
     /**
+     * @var int
+     */
+    private $cacheTtl = -1;
+
+    /**
+     * @var bool
+     */
+    private $isCacheForced = false;
+
+    /**
      * ApiRequest constructor.
      */
     public function __construct()
@@ -92,6 +102,46 @@ final class Request
     public function setOptions(array $options): Request
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCacheTtl(): int
+    {
+        return $this->cacheTtl;
+    }
+
+    /**
+     * @param int $cacheTtl
+     *
+     * @return Request
+     */
+    public function setCacheTtl(int $cacheTtl): Request
+    {
+        $this->cacheTtl = $cacheTtl;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCacheForced(): bool
+    {
+        return $this->isCacheForced;
+    }
+
+    /**
+     * @param bool $isCacheForced
+     *
+     * @return Request
+     */
+    public function setIsCacheForced(bool $isCacheForced): Request
+    {
+        $this->isCacheForced = $isCacheForced;
 
         return $this;
     }

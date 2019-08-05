@@ -11,10 +11,14 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $treeBuilder->root('lazy_http_client');
+        $treeBuilder = new TreeBuilder('lazy_http_client');
+        $treeBuilder->getRootNode()
+            ->children()
+                ->scalarNode('cache_adapter')
+                ->defaultNull()
+            ->end();
 
         return $treeBuilder;
     }

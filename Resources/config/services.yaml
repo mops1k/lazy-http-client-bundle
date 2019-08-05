@@ -25,6 +25,7 @@ services:
         arguments:
             - '@monolog.logger.lazy_http_client'
             - '@LazyHttpClientBundle\Profiler\RequestCollector'
+            - ~
 
     LazyHttpClientBundle\Client\LazyFactory:
         arguments:

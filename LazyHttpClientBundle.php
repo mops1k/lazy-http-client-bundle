@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LazyHttpClientBundle;
 
+use LazyHttpClientBundle\DependencyInjection\CompilerPass\HttpQueueCacheCompilerPass;
 use LazyHttpClientBundle\DependencyInjection\CompilerPass\ManagerCompilerPass;
 use LazyHttpClientBundle\DependencyInjection\CompilerPass\QueryContainerCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,5 +20,6 @@ class LazyHttpClientBundle extends Bundle
 
         $container->addCompilerPass(new ManagerCompilerPass());
         $container->addCompilerPass(new QueryContainerCompilerPass());
+        $container->addCompilerPass(new HttpQueueCacheCompilerPass());
     }
 }
