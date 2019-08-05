@@ -15,7 +15,7 @@ services:
             -:
               name:     data_collector
               template: '@LazyHttpClient/profiler/request_profiler.html.twig'
-              id:       'lazy_http_client.collector'
+              id:       'lazy_http_client'
 
     LazyHttpClientBundle\Client\Logger:
         tags:

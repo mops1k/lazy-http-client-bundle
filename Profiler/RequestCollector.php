@@ -48,7 +48,7 @@ class RequestCollector extends DataCollector
      */
     public function getName()
     {
-        return 'lazy_http_client.collector';
+        return 'lazy_http_client';
     }
 
     /**
