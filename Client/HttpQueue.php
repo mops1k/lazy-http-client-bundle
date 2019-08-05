@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace LazyHttpClientBundle\Client;
 
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\RequestOptions;
+use GuzzleHttp\TransferStats;
 use LazyHttpClientBundle\Exception\ResponseNotFoundException;
 use LazyHttpClientBundle\Interfaces\QueryInterface;
 use GuzzleHttp\Client;
@@ -83,7 +85,6 @@ class HttpQueue
 
             $request = $query->getRequest();
             $httpRequest = new Request($query->getMethod(), $uri, $request->getHeaders()->all(), $request->getBody());
-
             $this->requestsInfo[$key] = [
                 'host'       => $query->getClient()->getHost(),
                 'uri'        => $uri,
@@ -93,7 +94,12 @@ class HttpQueue
                 'body'       => $request->getBody(),
             ];
 
-            $promise = $this->httpClients[\get_class($query->getClient())]->sendAsync($httpRequest, $query->getRequest()->getOptions());
+            $promise = $this->httpClients[\get_class($query->getClient())]->sendAsync($httpRequest, array_merge($query->getRequest()->getOptions(), [
+                RequestOptions::ON_STATS => function (TransferStats $stats) use ($key) {
+                    $this->requestsInfo[$key]['timing'] = \round($stats->getTransferTime(), 3);
+                }
+            ]));
+
             $promise->then(function (ResponseInterface $response) use ($key) {
                 $this->responses[$key] = [
                     'headers'    => $response->getHeaders(),
