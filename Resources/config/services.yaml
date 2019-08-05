@@ -10,6 +10,13 @@ services:
         arguments:
             - ~
 
+    LazyHttpClientBundle\Profiler\RequestCollector:
+        tags:
+            -:
+              name:     data_collector
+              template: '@LazyHttpClient/profiler/request_profiler.html.twig'
+              id:       'lazy_http_client.collector'
+
     LazyHttpClientBundle\Client\Logger:
         tags:
             - { name: monolog.logger, channel: lazy_http_client }
@@ -17,6 +24,7 @@ services:
     LazyHttpClientBundle\Client\HttpQueue:
         arguments:
             - '@monolog.logger.lazy_http_client'
+            - '@LazyHttpClientBundle\Profiler\RequestCollector'
 
     LazyHttpClientBundle\Client\LazyFactory:
         arguments:

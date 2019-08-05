@@ -11,6 +11,7 @@ use LazyHttpClientBundle\Interfaces\QueryInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request;
+use LazyHttpClientBundle\Profiler\RequestCollector;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
@@ -45,13 +46,19 @@ class HttpQueue
     private $requestsInfo = [];
 
     /**
+     * @var RequestCollector
+     */
+    private $requestCollector;
+
+    /**
      * HttpQueue constructor.
      *
      * @param LoggerInterface $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger, RequestCollector $requestCollector)
     {
         $this->logger = $logger;
+        $this->requestCollector = $requestCollector;
     }
 
     /**
@@ -96,7 +103,8 @@ class HttpQueue
 
             $promise = $this->httpClients[\get_class($query->getClient())]->sendAsync($httpRequest, array_merge($query->getRequest()->getOptions(), [
                 RequestOptions::ON_STATS => function (TransferStats $stats) use ($key) {
-                    $this->requestsInfo[$key]['timing'] = \round($stats->getTransferTime(), 3);
+                    $this->requestsInfo[$key]['timing']     = \round($stats->getTransferTime(), 3);
+                    $this->requestsInfo[$key]['statusCode'] = $stats->hasResponse() ? $stats->getResponse()->getStatusCode() : 500;
                 }
             ]));
 
@@ -107,6 +115,7 @@ class HttpQueue
                     'content'    => $response->getBody()->getContents(),
                 ];
 
+                $this->requestCollector->collectInfo($this->requestsInfo[$key]);
                 $this->logger->info('Request success!', $this->requestsInfo[$key]);
             }, function (ClientException $reason) use ($key) {
                 $response = $reason->getResponse();
@@ -116,6 +125,7 @@ class HttpQueue
                     'content'    => $response ? $response->getBody()->getContents() : $reason->getMessage(),
                 ];
 
+                $this->requestCollector->collectInfo($this->requestsInfo[$key]);
                 $this->logger->error('Request failed!', \array_merge($this->requestsInfo[$key], [
                     'statusCode' => $response ? $response->getStatusCode() : $reason->getCode(),
                     'reason'     => $reason->getMessage(),
