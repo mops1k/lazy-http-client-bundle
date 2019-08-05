@@ -82,7 +82,7 @@ abstract class AbstractQuery implements QueryInterface
 
             $this->body = $this->getRequest()->getParameters()->all();
             $uriParameters = null;
-            if ($this->getMethod() === RequestMethodInterface::GET) {
+            if ($this->getMethod() === RequestMethodInterface::GET && $this->getRequest()->getParameters()->all()) {
                 $uriParameters = '?'.\http_build_query($this->getRequest()->getParameters()->all());
             }
 
@@ -101,7 +101,8 @@ abstract class AbstractQuery implements QueryInterface
     {
         return hash('sha256', \json_encode(\array_merge(
             $this->getRequest()->getParameters()->all(),
-            $this->getRequest()->getHeaders()->all()
+            $this->getRequest()->getHeaders()->all(),
+            [$this->getRequest()->getBody()]
         )));
     }
 
