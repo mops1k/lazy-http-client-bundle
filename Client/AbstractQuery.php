@@ -100,9 +100,13 @@ abstract class AbstractQuery implements QueryInterface
     public function getHashKey(): string
     {
         return hash('sha256', \json_encode(\array_merge(
+            [
+                $this->getUri(),
+                $this->getRequest()->getBody(),
+            ],
             $this->getRequest()->getParameters()->all(),
             $this->getRequest()->getHeaders()->all(),
-            [$this->getRequest()->getBody()]
+            $this->getRequest()->getOptions()
         )));
     }
 
