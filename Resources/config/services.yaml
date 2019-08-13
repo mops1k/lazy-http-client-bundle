@@ -22,10 +22,19 @@ services:
             - { name: monolog.logger, channel: lazy_http_client }
 
     LazyHttpClientBundle\Client\HttpQueue:
+        public: true
         arguments:
             - '@monolog.logger.lazy_http_client'
             - '@LazyHttpClientBundle\Profiler\RequestCollector'
             - ~
+
+    LazyHttpClientBundle\Tests\MockedHttpQueue:
+        public: true
+        arguments:
+            - '@monolog.logger.lazy_http_client'
+            - '@LazyHttpClientBundle\Profiler\RequestCollector'
+            - ~
+            - '@kernel'
 
     LazyHttpClientBundle\Client\LazyFactory:
         arguments:

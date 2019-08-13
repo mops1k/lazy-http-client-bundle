@@ -27,37 +27,37 @@ class HttpQueue
     /**
      * @var QueryInterface[]
      */
-    private $pool = [];
+    protected $pool = [];
 
     /**
      * @var Client[]
      */
-    private $httpClients = [];
+    protected $httpClients = [];
 
     /**
      * @var array
      */
-    private $responses = [];
+    protected $responses = [];
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * @var array
      */
-    private $requestsInfo = [];
+    protected $requestsInfo = [];
 
     /**
      * @var RequestCollector
      */
-    private $requestCollector;
+    protected $requestCollector;
 
     /**
      * @var CacheAdapterInterface|null
      */
-    private $cacheAdapter;
+    protected $cacheAdapter;
 
     /**
      * HttpQueue constructor.
