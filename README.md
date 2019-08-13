@@ -3,11 +3,11 @@ Lazy Http Client Bundle
 This bundle provides lazy http client for symfony 4.1 and above.
 Lazy means that before you are not using any response methods, request doesn't execute.
 
-####Instructions
-[Installation](Resources/doc/installation.md)
-[Example client](Resources/doc/client.md)
-[Example response](Resources/doc/response.md)
-[Example query](Resources/doc/query.md)
+#### Instructions
+- [Installation](Resources/doc/installation.md)
+- [Example client](Resources/doc/client.md)
+- [Example response](Resources/doc/response.md)
+- [Example query](Resources/doc/query.md)
 
 #### Usage
 Simple usage example
