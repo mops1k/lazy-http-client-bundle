@@ -1,53 +1,35 @@
-Installation
-============
+Lazy Http Client Bundle
+=====
+This bundle provides lazy http client for symfony 4.1 and above.
+Lazy means that before you are not using any response methods, request doesn't execute.
 
-Applications that use Symfony Flex
-----------------------------------
+####Instructions
+[Installation](Resources/doc/installation.md)
+[Example client](Resources/doc/client.md)
+[Example response](Resources/doc/response.md)
+[Example query](Resources/doc/query.md)
 
-Open a command console, enter your project directory and execute:
-
-```console
-$ composer require mops1k/lazy-http-client-bundle
-```
-
-Applications that don't use Symfony Flex
-----------------------------------------
-
-### Step 1: Download the Bundle
-
-Open a command console, enter your project directory and execute the
-following command to download the latest stable version of this bundle:
-
-```console
-$ composer require mops1k/lazy-http-client-bundle
-```
-
-This command requires you to have Composer installed globally, as explained
-in the [installation chapter](https://getcomposer.org/doc/00-intro.md)
-of the Composer documentation.
-
-### Step 2: Enable the Bundle
-
-Then, enable the bundle by adding it to the list of registered bundles
-in the `app/AppKernel.php` file of your project:
+#### Usage
+Simple usage example
 
 ```php
-<?php
-// app/AppKernel.php
+use LazyHttpClientBundle\Client\Manager;
+use App\ReqresFakeApi\Client;
+use App\ReqresFakeApi\Query\ListUsersQuery;
+use App\ReqresFakeApi\Query\SingleUserQuery;
 
-// ...
-class AppKernel extends Kernel
-{
-    public function registerBundles()
-    {
-        $bundles = [
-            // ...
-            new LazyHttpClientBundle\LazyHttpClientBundle(),
-        ];
+$client = $this->get(Manager::class)->get(Client::class);
+$client->use(ListUsersQuery::class);
+$listResult = $client->execute();
 
-        // ...
-    }
+$client = $this->apiClientManager->get(Client::class);
+$client->use(ListUsersQuery::class);
+$request = $client->getCurrentQuery()->getRequest();
+$request->getParameters()->set('page', 2);
+$listResult2 = $client->execute();
 
-    // ...
-}
+echo $listResult->getContent();
+echo $listResult2->getContent();
+echo $listResult2->getStatusCode();
+
 ```
