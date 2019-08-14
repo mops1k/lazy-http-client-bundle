@@ -40,15 +40,6 @@ interface CacheAdapterInterface
     public function delete();
 
     /**
-     * Generate key for cache
-     *
-     * @param array $params
-     *
-     * @return string
-     */
-    public function generateKey(array $params = []): string;
-
-    /**
      * Set current cache key
      *
      * @param string $key
