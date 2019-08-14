@@ -43,7 +43,7 @@ class LazyFactory
     /**
      * Return not initialized proxy response
      *
-     * @param QueryInterface $query
+     * @param ClientInterface $client
      *
      * @return GhostObjectInterface|ResponseInterface
      */
@@ -54,7 +54,7 @@ class LazyFactory
             return $this->responses[$key];
         }
 
-        $initializer = function (
+        $currentResponse = $this->lazyFactory->createProxy($client->getCurrentQuery()->getResponseClassName(), function (
             GhostObjectInterface $ghostObject,
             string $method,
             array $parameters,
@@ -72,10 +72,9 @@ class LazyFactory
             $properties["\0*\0headers"]    = $response['headers'];
 
             return true;
-        };
+        });
+        $this->responses[$key] = $currentResponse;
 
-        $this->responses[$key] = $this->lazyFactory->createProxy($client->getCurrentQuery()->getResponseClassName(), $initializer);
-
-        return $this->responses[$key];
+        return $currentResponse;
     }
 }

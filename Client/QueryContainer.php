@@ -30,7 +30,9 @@ class QueryContainer
         }
 
         foreach ($queries as $query) {
-            $this->collection[\get_class($query)] = $query;
+            if ($query instanceof QueryInterface) {
+                $this->collection[\get_class($query)] = $query;
+            }
         }
     }
 

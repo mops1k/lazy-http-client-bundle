@@ -8,6 +8,15 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Class ApiParameter
+ *
+ * @method void clear()
+ * @method void clearOptions()
+ * @method void clearParameters()
+ * @method void clearFormData()
+ * @method void clearHeaders()
+ * @method void clearBody()
+ * @method void clearCacheTtl()
+ * @method void clearCacheForced()
  */
 final class Request
 {
@@ -27,9 +36,9 @@ final class Request
     private $body;
 
     /**
-     * @var array
+     * @var ParameterBag
      */
-    private $options = [];
+    private $options;
 
     /**
      * @var int
@@ -42,12 +51,19 @@ final class Request
     private $isCacheForced = false;
 
     /**
+     * @var ParameterBag
+     */
+    private $formData;
+
+    /**
      * ApiRequest constructor.
      */
     public function __construct()
     {
         $this->headers    = new HeaderBag();
         $this->parameters = new ParameterBag();
+        $this->options    = new ParameterBag();
+        $this->formData   = new ParameterBag();
     }
 
     /**
@@ -89,7 +105,7 @@ final class Request
     /**
      * @return array
      */
-    public function getOptions(): array
+    public function getOptions(): ParameterBag
     {
         return $this->options;
     }
@@ -101,7 +117,7 @@ final class Request
      */
     public function setOptions(array $options): Request
     {
-        $this->options = $options;
+        $this->options->add($options);
 
         return $this;
     }
@@ -144,5 +160,57 @@ final class Request
         $this->isCacheForced = $isCacheForced;
 
         return $this;
+    }
+
+    /**
+     * @return ParameterBag
+     */
+    public function getFormData(): ParameterBag
+    {
+        return $this->formData;
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     */
+    public function __call($name, $arguments)
+    {
+        if (\strpos($name, 'clear') !== 0) {
+            return;
+        }
+
+        if (\strlen($name) === 5) {
+            $this->options = new ParameterBag();
+            $this->parameters = new ParameterBag();
+            $this->headers = new HeaderBag();
+            $this->cacheTtl = -1;
+            $this->body = null;
+            $this->isCacheForced = false;
+
+            return;
+        }
+
+        $parameterToClear = \substr($name, 5);
+
+        switch ($parameterToClear) {
+            case 'Options':
+            case 'Parameters':
+            case 'FormData':
+                $this->{\lcfirst($parameterToClear)} = new ParameterBag();
+                break;
+            case 'Headers':
+                $this->headers = new HeaderBag();
+                break;
+            case 'Body':
+                $this->body = null;
+                break;
+            case 'CacheTtl':
+                $this->cacheTtl = -1;
+                break;
+            case 'CacheForced':
+                $this->isCacheForced = false;
+                break;
+        }
     }
 }

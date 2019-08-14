@@ -30,7 +30,9 @@ class Manager
         }
 
         foreach ($clients as $client) {
-            $this->clients[\get_class($client)] = $client;
+            if ($client instanceof ClientInterface) {
+                $this->clients[\get_class($client)] = $client;
+            }
         }
     }
 

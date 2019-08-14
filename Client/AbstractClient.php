@@ -80,13 +80,17 @@ abstract class AbstractClient implements ClientInterface
 
     /**
      * @return GhostObjectInterface|ResponseInterface
+     *
+     * @throws ClientNotSupportedException
+     * @throws QueryNotFoundException
      */
     public function execute(): GhostObjectInterface
     {
-        $clonedClient = clone $this;
-        $this->pool->add($clonedClient->query);
+        $client = clone $this;
+        $this->pool->add(clone $client->query);
+        $this->use(\get_class($this->query));
 
-        return $this->lazyFactory->create($clonedClient);
+        return $this->lazyFactory->create($client);
     }
 
     /**
@@ -95,6 +99,14 @@ abstract class AbstractClient implements ClientInterface
     public function getCurrentQuery(): QueryInterface
     {
         return $this->query;
+    }
+
+    /**
+     * @return Request|null
+     */
+    public function getRequest(): Request
+    {
+        return $this->query ? $this->query->getRequest() : null;
     }
 
     /**

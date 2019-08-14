@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LazyHttpClientBundle\Interfaces;
 
+use LazyHttpClientBundle\Client\Request;
 use LazyHttpClientBundle\Interfaces\QueryInterface;
 use LazyHttpClientBundle\Interfaces\ResponseInterface;
 use ProxyManager\Proxy\GhostObjectInterface;
@@ -28,6 +29,11 @@ interface ClientInterface
      * @return QueryInterface
      */
     public function getCurrentQuery(): QueryInterface;
+
+    /**
+     * @return Request
+     */
+    public function getRequest(): Request;
 
     /**
      * @return array

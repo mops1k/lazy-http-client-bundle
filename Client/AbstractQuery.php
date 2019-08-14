@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace LazyHttpClientBundle\Client;
 
+use GuzzleHttp\RequestOptions;
 use LazyHttpClientBundle\Interfaces\ClientInterface;
 use LazyHttpClientBundle\Interfaces\QueryInterface;
 use LazyHttpClientBundle\Interfaces\RequestMethodInterface;
-use LazyHttpClientBundle\Client\Request;
 
 /**
  * Class AbstractQuery
@@ -41,11 +41,13 @@ abstract class AbstractQuery implements QueryInterface
     /**
      * Request for query
      *
+     * @param bool $reset
+     *
      * @return Request
      */
-    public function getRequest(): Request
+    public function getRequest(bool $reset = false): Request
     {
-        if (!$this->apiRequest) {
+        if (!$this->apiRequest || $reset) {
             $this->apiRequest = new Request();
             $this->apiRequest->getHeaders()->set('Content-Type', 'application/json');
         }
@@ -81,9 +83,10 @@ abstract class AbstractQuery implements QueryInterface
             }
 
             $this->body = $this->getRequest()->getParameters()->all();
-            $uriParameters = null;
-            if ($this->getMethod() === RequestMethodInterface::GET && $this->getRequest()->getParameters()->all()) {
-                $uriParameters = '?'.\http_build_query($this->getRequest()->getParameters()->all());
+            $uriParameters = '?'.\http_build_query($this->getRequest()->getParameters()->all());
+
+            if ($this->getRequest()->getFormData()->all()) {
+                $this->getRequest()->getOptions()->set(RequestOptions::FORM_PARAMS, $this->getRequest()->getFormData()->all());
             }
 
             $this->buildedUri = $uri.$uriParameters;
@@ -106,7 +109,7 @@ abstract class AbstractQuery implements QueryInterface
             ],
             $this->getRequest()->getParameters()->all(),
             $this->getRequest()->getHeaders()->all(),
-            $this->getRequest()->getOptions()
+            $this->getRequest()->getOptions()->all()
         )));
     }
 

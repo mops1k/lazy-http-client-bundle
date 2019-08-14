@@ -133,7 +133,7 @@ class HttpQueue
                 $cacheTtl = $request->getCacheTtl();
             }
 
-            $promise = $this->httpClients[\get_class($query->getClient())]->sendAsync($httpRequest, array_merge($query->getRequest()->getOptions(), [
+            $promise = $this->httpClients[\get_class($query->getClient())]->sendAsync($httpRequest, \array_merge($query->getRequest()->getOptions()->all(), [
                 RequestOptions::ON_STATS => function (TransferStats $stats) use ($key) {
                     $this->requestsInfo[$key]['timing']     = \round($stats->getTransferTime(), 3);
                     $this->requestsInfo[$key]['statusCode'] = $stats->hasResponse() ? $stats->getResponse()->getStatusCode() : 500;
