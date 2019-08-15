@@ -65,7 +65,7 @@ class MockedHttpQueue extends HttpQueue
         foreach ($this->pool as $key => $query) {
             $fileName = $mockDirectory.$key.'.json';
             if (\file_exists($fileName)) {
-                $this->responses[$key] = \json_decode(\file_get_contents($fileName), true);
+                $this->responses[$key] = \unserialize(\file_get_contents($fileName), true);
                 $existsKeys[] = $key;
             }
         }
@@ -76,7 +76,7 @@ class MockedHttpQueue extends HttpQueue
         foreach ($this->responses as $key => $response) {
             $fileName = $mockDirectory.$key.'.json';
             if (!\in_array($key, $existsKeys)) {
-                \file_put_contents($fileName, \json_encode($response));
+                \file_put_contents($fileName, \serialize($response));
             }
         }
     }
