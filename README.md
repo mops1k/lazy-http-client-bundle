@@ -22,10 +22,7 @@ $client = $this->get(Manager::class)->get(Client::class);
 $client->use(ListUsersQuery::class);
 $listResult = $client->execute();
 
-$client = $this->apiClientManager->get(Client::class);
-$client->use(ListUsersQuery::class);
-$request = $client->getRequest();
-$request->getParameters()->set('page', 2);
+$client->getRequest()->getParameters()->set('page', 2);
 $listResult2 = $client->execute();
 
 echo $listResult->getContent();
