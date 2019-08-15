@@ -19,6 +19,8 @@ class MockedHttpQueue extends HttpQueue
      */
     private const MOCK_DIRECTORY = 'var'.DIRECTORY_SEPARATOR.'lazy_http_client'.DIRECTORY_SEPARATOR;
 
+    private const MOCK_EXTENSION = 'response';
+
     /**
      * @var KernelInterface
      */
@@ -63,7 +65,7 @@ class MockedHttpQueue extends HttpQueue
         // Fill responses with exists mocked data
         $existsKeys = [];
         foreach ($this->pool as $key => $query) {
-            $fileName = $mockDirectory.$key.'.json';
+            $fileName = $mockDirectory.$key.'.'.static::MOCK_EXTENSION;
             if (\file_exists($fileName)) {
                 $this->responses[$key] = \unserialize(\file_get_contents($fileName), true);
                 $existsKeys[] = $key;
@@ -74,7 +76,7 @@ class MockedHttpQueue extends HttpQueue
 
         // Put new responses to mock files
         foreach ($this->responses as $key => $response) {
-            $fileName = $mockDirectory.$key.'.json';
+            $fileName = $mockDirectory.$key.'.'.static::MOCK_EXTENSION;
             if (!\in_array($key, $existsKeys)) {
                 \file_put_contents($fileName, \serialize($response));
             }
