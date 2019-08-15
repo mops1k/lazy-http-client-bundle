@@ -67,7 +67,7 @@ class MockedHttpQueue extends HttpQueue
         foreach ($this->pool as $key => $query) {
             $fileName = $mockDirectory.$key.'.'.static::MOCK_EXTENSION;
             if (\file_exists($fileName)) {
-                $this->responses[$key] = \unserialize(\file_get_contents($fileName), true);
+                $this->responses[$key] = \unserialize(\file_get_contents($fileName));
                 $existsKeys[] = $key;
             }
         }
