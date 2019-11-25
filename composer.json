@@ -15,7 +15,7 @@
     "ext-json": "*",
     "guzzlehttp/guzzle": "~6.0",
     "ocramius/proxy-manager": "^2.2",
-    "symfony/framework-bundle": "~4.1|~4.2|~4.3",
+    "symfony/framework-bundle": "~4.1|~4.2|~4.3|~4.4|~5.0",
     "symfony/monolog-bundle": "^3.4"
   },
   "autoload": {
